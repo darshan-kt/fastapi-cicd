@@ -2,37 +2,43 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   pull_request:
-    
+
 jobs:
   test:
-    runs-on ubuntu-latest
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.12'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-        - name: Install dependencies
-          run: |
-            pip install -r requirements.txt
-            pip install -r requirements-dev.txt
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
-        - name: Lint    
-          run: ruff check .
+      - name: Lint
+        run: ruff check .
 
-        - name: Run tests
-          run: |
-            pytest tests
+      - name: Test
+        run: pytest -v
 
-        - name: Security Scan
+      - name: Coverage
+        run: |
+          coverage run -m pytest
+          coverage report
+
+      - name: Security Scan
         run: bandit -r app
-       
-        - name: Docker Build
-          run: |
-            docker build -t fastapi-cicd .
+
+      - name: Docker Build
+        run: |
+          docker build -t fastapi-cicd .
