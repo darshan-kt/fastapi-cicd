@@ -1,0 +1,5 @@
+pytest
+httpx
+coverage
+ruff
+bandit
